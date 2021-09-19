@@ -73,8 +73,7 @@ lookup <- data.frame(team, teamLeague)
 
 downloadSummary <- function(team,
                             start_yr = 2019,
-                            end_yr = start_yr,
-                            only_completed = TRUE) {
+                            end_yr = start_yr) {
   output = data.frame()
   
   for (yr in start_yr:end_yr) {
@@ -91,12 +90,8 @@ downloadSummary <- function(team,
                              TRUE ~ "Home"),
         HomeTeam = case_when(Location == "Home" ~ Tm,
                              TRUE ~ Opp)
-      )
-    
-    if (only_completed == TRUE) {
-      temp <- temp %>%
-        filter(Inn != "Game Preview, and Matchups")
-    }
+      ) %>% 
+      filter(Inn != "Game Preview, and Matchups")
     
     output <- temp %>%
       mutate(year = yr) %>%
@@ -172,3 +167,11 @@ downloadBox <- function (schedule) {
   return(schedule)
 }
 
+downloadAll <- function(team,
+                        start_yr = 2019,
+                        end_yr = start_yr) {
+  
+  temp <- downloadSummary(team, start_yr, end_yr)
+  result <- downloadBox(temp)
+  return(result)
+}
